@@ -2,21 +2,24 @@ class Population {
    
   float mutationRate;
   Rocket [] population;
-  ArrayList<Rocket> matingPool;
+  ArrayList<Rocket> matingPool = new ArrayList<Rocket>();
   int generations;
   PVector target;
-  float fitness;
+  //float fitness;
   
    Population(float rate, int pop){
     mutationRate = rate;
     population = new Rocket[pop];
-    generations = 0;
-    matingPool = new ArrayList<Rocket>();
-    
-    for (int i = 0; i < population.length; i++) {
-      PVector position = new PVector(width/2,height+20);
-      population[i] = new Rocket(position, new DNA());
+    //generations = 0;
+    //matingPool = new ArrayList<Rocket>();
+    for(int i = 0; i < pop; i++) {
+      population[i] = new Rocket(new PVector(width/2, 700));
     }
+    
+    //for (int i = 0; i < population.length; i++) {
+    //  PVector position = new PVector(width/2,height+20);
+    //  population[i] = new Rocket(position, new DNA());
+    //}
   }
   
   void fitness() {
@@ -25,44 +28,34 @@ class Population {
     }
   }
   
-  float getMaxFitness() {
-    float record = 0;
-    for (int i = 0; i < population.length; i++) {
-       if(population[i].fitness > record) {
-         record = population[i].fitness;
-       }
-    }
-    return record;
-  }
   
   void selection() {
-    matingPool.clear();
-    float maxFitness = getMaxFitness();
-    
-    for (int i = 0; i < population.length; i++) {
-      float fitnessNormal = map(population[i].fitness,0,maxFitness,0,1);
-      int n = (int) (fitnessNormal * 100);
-      for (int j = 0; j < n; j++) {
+    matingPool = new ArrayList<Rocket>();
+    for(int i = 0; i < population.length; i++) {
+      int n = int(population[i].fitness * 1000);
+      if(n == 0) {
+        n = 1;
+      }
+      for(int j = 0; j < n; j++) {
         matingPool.add(population[i]);
       }
     }
   }
   
   void reproduction() {
-    for(int i=0;i<population.length;i++){
-      
+    for(int i = 0; i < population.length; i++) {
       int A = int(random(matingPool.size()));
       int B = int(random(matingPool.size()));
-      
-      Rocket first = matingPool.get(A);
-      Rocket second = matingPool.get(B);
-      DNA mom = first.dna;
-      DNA dad = second.dna;
-      DNA child = mom.crossover(dad);
-      PVector startingPosition = new PVector(width/2,height);
-      population[i] = new Rocket(startingPosition,child); 
+      while(A == B) {
+        B = int(random(matingPool.size()));
+      }
+
+      Rocket partnerA = matingPool.get(A);
+      Rocket partnerB = matingPool.get(B);
+
+      Rocket child = partnerA.crossover(partnerB);
+      population[i] = child;
     }
-    generations++;
   }
   
   void live () {

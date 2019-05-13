@@ -1,14 +1,16 @@
 Rocket rocket;
-final int LIFETIME = 100;
+final int LIFETIME = 500;
 PVector target;
 int lifeCounter;
 Population population;
+//int lifeSpan;
 
 void setup() {
    size(800, 800); 
-   rocket = new Rocket(new PVector(100, 200));
+   //rocket = new Rocket(new PVector(100, 200));
    target = new PVector(width/2,50);
    lifeCounter = 0;  
+   lifeSpan = 500;
    float mutationRate = 0.01;
    population = new Population(mutationRate, 50);
 }
@@ -18,7 +20,7 @@ void draw() {
    ellipse(target.x,target.y,50,50);
   
   
-   if (lifeCounter < LIFETIME) {
+   if (lifeCounter < lifeSpan) {
      population.live();
      lifeCounter++;
    } else {
